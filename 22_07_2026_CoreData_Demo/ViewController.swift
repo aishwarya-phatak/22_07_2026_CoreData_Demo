@@ -16,6 +16,7 @@ class ViewController: UIViewController {
     }
     
     func insertEmployeeRecords(){
+        print("------inside insert employee record function-------")
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         
@@ -51,7 +52,7 @@ class ViewController: UIViewController {
             
             nsManagedObject1.setValue("Employee \(i)", forKey: "empName")
             nsManagedObject1.setValue("Pune", forKey: "empCity")
-            nsManagedObject1.setValue("\(i)", forKey: "empId")
+            nsManagedObject1.setValue(i, forKey: "empId")
         }
         
         do{
