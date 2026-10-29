@@ -12,7 +12,12 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        insertEmployeeRecords()
+//        insertEmployeeRecords()
+        retriveEmployeeRecords()
+        
+        deleteEmployeeRecord()
+        
+        retriveEmployeeRecords()
     }
     
     func insertEmployeeRecords(){
@@ -59,6 +64,63 @@ class ViewController: UIViewController {
             try managedContext.save()
         }catch{
             print("the changes not saved")
+        }
+    }
+    
+    func retriveEmployeeRecords(){
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let employeeEntityDescription = NSEntityDescription.entity(forEntityName: "Employee", in: managedContext)
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Employee")
+        
+        fetchRequest.entity = employeeEntityDescription
+        
+        do{
+            let fetchedRequestResults = try managedContext.fetch(fetchRequest) as! [NSManagedObject]
+            
+            let cntOfResults = fetchedRequestResults.count
+            
+            for i in 0...cntOfResults - 1{
+                let eachEmployee = fetchedRequestResults[i]
+                print(eachEmployee)
+            }
+        }catch{
+            print("fetch request failed")
+        }
+        
+        do{
+            try managedContext.save()
+        }catch{
+            print("saving on context failed")
+        }
+    }
+    
+    func deleteEmployeeRecord(){
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let employeeEntityDescription = NSEntityDescription.entity(forEntityName: "Employee", in: managedContext)
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Employee")
+        
+        let predicate = NSPredicate(format: "empId == %@", 1)
+        
+        fetchRequest.entity = employeeEntityDescription
+        fetchRequest.predicate = predicate
+        
+        let fetchedRequestResults = try! managedContext.fetch(fetchRequest) as! [NSManagedObject]
+        
+        let employeeToDeleted = fetchedRequestResults[0]
+        
+        managedContext.delete(employeeToDeleted)
+    
+        do{
+            try managedContext.save()
+        }catch{
+            print("employee object deleted")
         }
     }
 }
