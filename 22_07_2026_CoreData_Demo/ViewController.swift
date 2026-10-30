@@ -13,10 +13,15 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 //        insertEmployeeRecords()
+        print("---------------")
         retriveEmployeeRecords()
-        
-        deleteEmployeeRecord()
-        
+        print("---------------")
+//        deleteEmployeeRecord()
+        print("---------------")
+        retriveEmployeeRecords()
+        print("---------------")
+        updateAnEmployeeRecord()
+        print("---------------")
         retriveEmployeeRecords()
     }
     
@@ -106,7 +111,7 @@ class ViewController: UIViewController {
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Employee")
         
-        let predicate = NSPredicate(format: "empId == %@", 1)
+        let predicate = NSPredicate(format: "empId == %@", NSNumber(integerLiteral: 1))
         
         fetchRequest.entity = employeeEntityDescription
         fetchRequest.predicate = predicate
@@ -121,6 +126,40 @@ class ViewController: UIViewController {
             try managedContext.save()
         }catch{
             print("employee object deleted")
+        }
+    }
+    
+    
+    func updateAnEmployeeRecord(){
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        let managedContext = appDelegate!.persistentContainer.viewContext
+        
+        let employeeEntityDescirption = NSEntityDescription.entity(forEntityName: "Employee", in: managedContext)
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Employee")
+        
+        let predicateForUpdate = NSPredicate(format: "empId == %@", NSNumber(integerLiteral: 2))
+        
+        fetchRequest.entity = employeeEntityDescirption
+        fetchRequest.predicate = predicateForUpdate
+        
+        do{
+            let fetchRequestResults = try managedContext.fetch(fetchRequest) as? [NSManagedObject]
+            print(fetchRequestResults!)
+            let cntResults = fetchRequestResults?.count
+            print(cntResults!,"-------")
+            let objectOfEmpToBeUpdated = fetchRequestResults![0]
+            objectOfEmpToBeUpdated.setValue("Raj", forKey: "empName")
+            objectOfEmpToBeUpdated.setValue("Koregoan", forKey: "empCity")
+            objectOfEmpToBeUpdated.setValue(123333, forKey: "empId")
+        }catch{
+            print("fetch request failed")
+        }
+        
+        do{
+            try managedContext.save()
+        }catch{
+            print("saved failed")
         }
     }
 }
